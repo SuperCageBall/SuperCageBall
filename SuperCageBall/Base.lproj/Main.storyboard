@@ -1,25 +1,83 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6211" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="LVB-YS-i5n">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="O9T-95-Oaq">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6204"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
     </dependencies>
     <scenes>
         <!--Game View Controller-->
         <scene sceneID="CtS-rA-C9T">
             <objects>
-                <viewController id="LVB-YS-i5n" customClass="GameViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="LVB-YS-i5n" customClass="GameViewController" customModule="SuperCageBall" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="ubL-yK-d3C"/>
-                        <viewControllerLayoutGuide type="bottom" id="BKx-HY-NrO"/>
+                        <viewControllerLayoutGuide type="top" id="39h-lF-Ldx"/>
+                        <viewControllerLayoutGuide type="bottom" id="EsF-fF-oMk"/>
                     </layoutGuides>
-                    <sceneKitView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="bdc-N1-crn">
+                    <view key="view" contentMode="scaleToFill" id="QSd-XQ-CRq">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </sceneKitView>
+                        <subviews>
+                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LBY-sr-i5W">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </sceneKitView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fbi-rl-eGf">
+                                <rect key="frame" x="279" y="20" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="centerX" secondItem="LBY-sr-i5W" secondAttribute="centerX" id="1BK-Nj-0Xb"/>
+                            <constraint firstAttribute="centerX" secondItem="fbi-rl-eGf" secondAttribute="centerX" id="7t5-Nf-hNP"/>
+                            <constraint firstItem="LBY-sr-i5W" firstAttribute="height" secondItem="QSd-XQ-CRq" secondAttribute="height" id="Gy6-5u-G3w"/>
+                            <constraint firstAttribute="centerY" secondItem="LBY-sr-i5W" secondAttribute="centerY" id="Rn3-QT-u4s"/>
+                            <constraint firstItem="fbi-rl-eGf" firstAttribute="top" secondItem="39h-lF-Ldx" secondAttribute="bottom" id="ez1-hQ-jJ0"/>
+                            <constraint firstItem="LBY-sr-i5W" firstAttribute="width" secondItem="QSd-XQ-CRq" secondAttribute="width" id="yfl-21-4FU"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="scnView" destination="LBY-sr-i5W" id="mEH-D1-eBG"/>
+                        <outlet property="timerLabel" destination="fbi-rl-eGf" id="CPI-XE-tCV"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="btX-cZ-eVz" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="846" y="430"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="RZ7-8f-5gu">
+            <objects>
+                <viewController id="O9T-95-Oaq" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="6e4-GM-IDa"/>
+                        <viewControllerLayoutGuide type="bottom" id="84z-xL-lL5"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="FWv-8J-VIn">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0fp-6q-pZB">
+                                <rect key="frame" x="261" y="285" width="79" height="30"/>
+                                <state key="normal" title="Start Game">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="LVB-YS-i5n" kind="show" id="OcP-kz-8dR"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="centerY" secondItem="0fp-6q-pZB" secondAttribute="centerY" id="YjG-do-Xpu"/>
+                            <constraint firstAttribute="centerX" secondItem="0fp-6q-pZB" secondAttribute="centerX" id="rJK-DL-eom"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SYz-W9-koz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="111" y="430"/>
         </scene>
     </scenes>
 </document>

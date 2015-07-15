@@ -1,11 +1,20 @@
 import UIKit
 import QuartzCore
 import SceneKit
+//import SpriteKit
 import CoreMotion
 
-class GameViewController: UIViewController {
+class GameViewController: UIViewController, SCNSceneRendererDelegate {
     
+    let cameraNode = SCNNode()
+    let ball = SCNNode()
     let motionManager = CMMotionManager()
+    
+    @IBOutlet var scnView: SCNView!
+    @IBOutlet var timerLabel: UILabel!
+    
+    let startTime = NSDate()
+    var timer: NSTimer!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,7 +26,6 @@ class GameViewController: UIViewController {
         scene.physicsWorld.timeStep = 1/300
         
         // create and add a camera to the scene
-        let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         scene.rootNode.addChildNode(cameraNode)
         
@@ -35,8 +43,7 @@ class GameViewController: UIViewController {
         
         scene.rootNode.addChildNode(floor)
         
-        let ball = SCNNode()
-        let ballGeometry = SCNSphere(radius: 0.01)
+        let ballGeometry = SCNSphere(radius: 0.1)
         ball.geometry = ballGeometry
         ball.position = SCNVector3(x: 0, y: Float(ballGeometry.radius), z: 0)
         
@@ -58,26 +65,26 @@ class GameViewController: UIViewController {
         }
         
         // add a wall
-        let walls = (0...3).map { (w: Int) -> SCNNode in
-            let wf = Float(w)
-            let wallGeometry = SCNPlane(width: 1, height: 0.25)
-            let wall = SCNNode(geometry: wallGeometry)
-            wall.position = SCNVector3(
-                x: ((wf % 2) / 2.0) * (w < 2 ? 1 : -1),
-                y: 0.125,
-                z: (((wf + 1) % 2) / 2.0) * (w < 2 ? -1 : 1))
-            wall.physicsBody = SCNPhysicsBody(
-                type: .Static,
-                shape: nil)
-            wall.eulerAngles = SCNVector3(x: 0, y: Float(M_PI_2)*(-wf), z: 0)
-            
-            println("\(wall.position.x) \(wall.position.y) \(wall.position.z): \(wall.eulerAngles.y)")
-            return wall
-        }
-        
-        for wall in walls {
-            scene.rootNode.addChildNode(wall)
-        }
+//        let walls = (0...3).map { (w: Int) -> SCNNode in
+//            let wf = Float(w)
+//            let wallGeometry = SCNPlane(width: 1, height: 0.25)
+//            let wall = SCNNode(geometry: wallGeometry)
+//            wall.position = SCNVector3(
+//                x: ((wf % 2) / 2.0) * (w < 2 ? 1 : -1),
+//                y: 0.125,
+//                z: (((wf + 1) % 2) / 2.0) * (w < 2 ? -1 : 1))
+//            wall.physicsBody = SCNPhysicsBody(
+//                type: .Static,
+//                shape: nil)
+//            wall.eulerAngles = SCNVector3(x: 0, y: Float(M_PI_2)*(-wf), z: 0)
+//            
+//            println("\(wall.position.x) \(wall.position.y) \(wall.position.z): \(wall.eulerAngles.y)")
+//            return wall
+//        }
+//        
+//        for wall in walls {
+//            scene.rootNode.addChildNode(wall)
+//        }
         
         
         // create and add a light to the scene
@@ -94,9 +101,6 @@ class GameViewController: UIViewController {
         ambientLightNode.light!.color = UIColor.darkGrayColor()
         scene.rootNode.addChildNode(ambientLightNode)
         
-        // retrieve the SCNView
-        let scnView = self.view as! SCNView
-        
         // set the scene to the view
         scnView.scene = scene
         
@@ -108,6 +112,38 @@ class GameViewController: UIViewController {
         // configure the view
         scnView.backgroundColor = UIColor.whiteColor()
         
+        // setup delegate to handle callbacks at various stages of scene rendering
+        scnView.delegate = self
+        
+        // overlay info
+        // scnView.overlaySKScene = nil
+        timer = NSTimer.scheduledTimerWithTimeInterval(1,
+            target: self, selector: "timerTick", userInfo: nil, repeats: true)
+        
+        timerTick()
+        
+    }
+    
+    func timerTick() {
+        let elapsed = -startTime.timeIntervalSinceNow
+        let formatter = NSDateComponentsFormatter()
+        formatter.unitsStyle = .Positional
+        formatter.zeroFormattingBehavior = .Pad
+        formatter.allowedUnits = .CalendarUnitMinute | .CalendarUnitSecond
+        timerLabel.text = formatter.stringFromTimeInterval(elapsed)
+    }
+    
+    func renderer(aRenderer: SCNSceneRenderer, didSimulatePhysicsAtTime time: NSTimeInterval) {
+        // fires when the ball goes outside of the camera view:
+        let isBallVisible = scnView.isNodeInsideFrustum(ball.presentationNode(),
+            withPointOfView: scnView.pointOfView)
+        if !isBallVisible {
+            // TODO Lose
+            println("The ball is outside of the camera view!")
+            scnView.delegate = nil
+            motionManager.stopAccelerometerUpdates()
+            dismissViewControllerAnimated(true, completion: nil)
+        }
     }
     
     override func shouldAutorotate() -> Bool {
