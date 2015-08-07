@@ -36,6 +36,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         let floor = SCNNode()
         let floorGeometry = SCNFloor()
         floorGeometry.reflectivity = 0
+        floorGeometry.firstMaterial!.diffuse.contents = UIColor.lightGrayColor()
         floor.geometry = floorGeometry
         
         let floorPhysics = SCNPhysicsBody(type: .Static, shape: SCNPhysicsShape(geometry: floorGeometry, options: nil))
@@ -51,6 +52,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         ballPhysics.mass = 1
         ball.physicsBody = ballPhysics
         
+        // set color
+        ball.geometry!.firstMaterial!.diffuse.contents = BallColor
+        
         scene.rootNode.addChildNode(ball)
         
         let accelerationMultiplier = Float(ballPhysics.mass) * 9.8
@@ -58,10 +62,19 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         let motionQueue = NSOperationQueue()
         motionManager.startAccelerometerUpdatesToQueue(motionQueue) { accelerometerData, err in
             let acceleration = accelerometerData.acceleration
-            ballPhysics.applyForce(
-                SCNVector3(x: Float(acceleration.x) * accelerationMultiplier, y: 0, z: -Float(acceleration.y) * accelerationMultiplier),
-                impulse: false
-            )
+            let multiplier: Float = (UseAcceleration ? 1 : 0.5);
+            let x = Float(acceleration.x) * accelerationMultiplier * multiplier
+            let z = -Float(acceleration.y) * accelerationMultiplier * multiplier
+            let vector = SCNVector3(x: x, y: 0, z: z)
+            
+            if UseAcceleration {
+                ballPhysics.applyForce(
+                    vector,
+                    impulse: false
+                )
+            } else {
+                ballPhysics.velocity = vector
+            }
         }
         
         // add a wall
@@ -91,7 +104,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         let lightNode = SCNNode()
         lightNode.light = SCNLight()
         lightNode.light!.type = SCNLightTypeOmni
-        lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
+        lightNode.position = SCNVector3(x: 0, y: 10, z: -3)
         scene.rootNode.addChildNode(lightNode)
         
         // create and add an ambient light to the scene
